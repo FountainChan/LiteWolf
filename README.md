@@ -1,5 +1,7 @@
 # 🐺 LiteWolf
 
+**[English](README.md)** · **[简体中文](README_CN.md)**
+
 **A second brain for [OpenCode](https://opencode.ai).** Zero-dependency, zero-API, pure file I/O.
 
 Inspired by [OpenWolf](https://github.com/cytostack/openwolf) — ported from Claude Code hooks to OpenCode's native plugin system.
@@ -22,24 +24,29 @@ All through OpenCode's native plugin events. **No LLM API, no external services,
 
 ## 📦 Installation
 
-### Option 1: Copy to global plugins (recommended)
+### Option 1: From npm (recommended)
+
+Add to your `opencode.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["litewolf"]
+}
+```
+
+OpenCode installs the plugin automatically at startup via Bun.
+
+### Option 2: Copy to global plugins
 
 ```bash
 cp openwolf.js ~/.config/opencode/plugins/
 ```
 
-### Option 2: Copy to project plugins
+### Option 3: Copy to project plugins
 
 ```bash
 cp openwolf.js your-project/.opencode/plugins/
-```
-
-### Option 3: From npm (coming soon)
-
-```json
-{
-  "plugin": ["litewolf"]
-}
 ```
 
 ### Dependencies
@@ -55,6 +62,8 @@ Requires `@opencode-ai/plugin` in your `.opencode/package.json`:
 ```
 
 That's it. Restart OpenCode and LiteWolf auto-initializes `.wolf/` in your project.
+
+> 💡 **Note**: The npm package name is `litewolf`, but the plugin file is `openwolf.js`. This is intentional — the name LiteWolf distinguishes it from the original OpenWolf for Claude Code, while the file name preserves compatibility.
 
 ---
 

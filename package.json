@@ -1,0 +1,48 @@
+{
+  "name": "litewolf",
+  "version": "1.0.0",
+  "description": "🐺 A second brain for OpenCode — OpenWolf port with zero dependencies. File index, learning memory, token tracking, bug memory.",
+  "main": "src/index.js",
+  "exports": {
+    ".": {
+      "import": "./src/index.js"
+    }
+  },
+  "files": [
+    "src/"
+  ],
+  "keywords": [
+    "opencode",
+    "plugin",
+    "openwolf",
+    "litewolf",
+    "memory",
+    "token-tracking",
+    "file-index",
+    "cerebrum",
+    "anatomy",
+    "ai",
+    "coding-assistant"
+  ],
+  "author": "FountainChan",
+  "license": "AGPL-3.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FountainChan/LiteWolf.git"
+  },
+  "homepage": "https://github.com/FountainChan/LiteWolf#readme",
+  "bugs": {
+    "url": "https://github.com/FountainChan/LiteWolf/issues"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@opencode-ai/plugin": {
+      "optional": false
+    }
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
