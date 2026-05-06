@@ -26,7 +26,7 @@ All through OpenCode's native plugin events. **No LLM API, no external services,
 
 ### Option 1: From npm (recommended)
 
-Add to your `opencode.json`:
+Add to your project's `opencode.json`:
 
 ```json
 {
@@ -35,17 +35,39 @@ Add to your `opencode.json`:
 }
 ```
 
-OpenCode installs the plugin automatically at startup via Bun.
+Or add to your global config (`~/.config/opencode/opencode.json`) to enable for all projects:
+
+```json
+{
+  "plugin": ["litewolf"]
+}
+```
+
+OpenCode installs the plugin automatically at startup via Bun. No manual steps needed.
+
+You can also install directly via npm:
+
+```bash
+npm install -g litewolf
+```
+
+Or install locally in your project:
+
+```bash
+npm install litewolf
+```
 
 ### Option 2: Copy to global plugins
 
 ```bash
+# Download and copy to global plugins directory
 cp openwolf.js ~/.config/opencode/plugins/
 ```
 
 ### Option 3: Copy to project plugins
 
 ```bash
+# Download and copy to project plugins directory
 cp openwolf.js your-project/.opencode/plugins/
 ```
 

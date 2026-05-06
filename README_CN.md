@@ -26,7 +26,7 @@ LiteWolf 为你的 AI 编程助手提供：
 
 ### 方式一：npm 安装（推荐）
 
-在 `opencode.json` 中添加：
+在项目的 `opencode.json` 中添加：
 
 ```json
 {
@@ -35,7 +35,27 @@ LiteWolf 为你的 AI 编程助手提供：
 }
 ```
 
-OpenCode 启动时通过 Bun 自动安装插件。
+或添加到全局配置（`~/.config/opencode/opencode.json`）以对所有项目生效：
+
+```json
+{
+  "plugin": ["litewolf"]
+}
+```
+
+OpenCode 启动时通过 Bun 自动安装插件，无需手动操作。
+
+也可以直接通过 npm 安装：
+
+```bash
+npm install -g litewolf
+```
+
+或在项目中本地安装：
+
+```bash
+npm install litewolf
+```
 
 ### 方式二：复制到全局插件目录
 
