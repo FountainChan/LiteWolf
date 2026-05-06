@@ -61,14 +61,14 @@ npm install litewolf
 
 ```bash
 # Download and copy to global plugins directory
-cp openwolf.js ~/.config/opencode/plugins/
+cp src/index.js ~/.config/opencode/plugins/openwolf.js
 ```
 
 ### Option 3: Copy to project plugins
 
 ```bash
 # Download and copy to project plugins directory
-cp openwolf.js your-project/.opencode/plugins/
+cp src/index.js your-project/.opencode/plugins/openwolf.js
 ```
 
 ### Dependencies
@@ -84,8 +84,6 @@ Requires `@opencode-ai/plugin` in your `.opencode/package.json`:
 ```
 
 That's it. Restart OpenCode and LiteWolf auto-initializes `.wolf/` in your project.
-
-> 💡 **Note**: The npm package name is `litewolf`, but the plugin file is `openwolf.js`. This is intentional — the name LiteWolf distinguishes it from the original OpenWolf for Claude Code, while the file name preserves compatibility.
 
 ---
 

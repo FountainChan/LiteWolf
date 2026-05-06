@@ -60,13 +60,13 @@ npm install litewolf
 ### 方式二：复制到全局插件目录
 
 ```bash
-cp openwolf.js ~/.config/opencode/plugins/
+cp src/index.js ~/.config/opencode/plugins/openwolf.js
 ```
 
 ### 方式三：复制到项目插件目录
 
 ```bash
-cp openwolf.js your-project/.opencode/plugins/
+cp src/index.js your-project/.opencode/plugins/openwolf.js
 ```
 
 ### 依赖
