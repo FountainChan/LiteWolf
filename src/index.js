@@ -232,9 +232,11 @@ function appendMemory(dir, action, relPath, tokens) {
 }
 
 export default async function openwolfPlugin({ client, directory }) {
-  if (!existsWolfDir(directory)) {
-    initWolfDir(directory);
-    console.log("[openwolf] Initialized .wolf/ directory");
+  const initialized = existsWolfDir(directory);
+  if (initialized) {
+    console.log("[openwolf] .wolf/ already exists, plugin active");
+  } else {
+    console.log("[openwolf] No .wolf/ directory. Run /wolf-init to activate.");
   }
 
   const sessionState = {
@@ -291,10 +293,49 @@ If you discover a project convention, add it to Key Learnings.
 $ARGUMENTS
 </user-request>`,
         },
+        "wolf-init": {
+          description: "(openwolf) Initialize .wolf/ directory in current project",
+          template: `<command-instruction>
+Create the .wolf/ directory in the current project root with all template files.
+
+Run initWolfDir() logic: create .wolf/ directory, then create these files:
+- anatomy.md — Project structure index
+- cerebrum.md — Learning memory with sections: Do-Not-Repeat, User Preferences, Key Learnings, Decision Log
+- memory.md — Chronological action log
+- buglog.json — Empty array []
+- token-ledger.json — Session token tracking JSON
+- config.json — Plugin configuration with enabled, track_tokens, warn_repeated_reads, enforce_cerebrum
+- identity.md — Project name and agent role
+- OPENWOLF.md — Instructions injected into system prompt
+
+After creation, inform the user that .wolf/ is initialized and suggest running /wolf-scan next.
+</command-instruction>
+
+<user-request>
+$ARGUMENTS
+</user-request>`,
+        },
+        "wolf-destroy": {
+          description: "(openwolf) Remove .wolf/ directory and all its contents",
+          template: `<command-instruction>
+Delete the entire .wolf/ directory from the current project root, including all files inside it.
+
+Steps:
+1. Confirm with the user before deleting (ask "Are you sure? This will remove all memories, bug logs, and token history for this project.")
+2. If confirmed, delete .wolf/ directory recursively
+3. Inform the user that .wolf/ has been removed and the plugin is now inactive for this project
+</command-instruction>
+
+<user-request>
+$ARGUMENTS
+</user-request>`,
+        },
       };
     },
 
     "experimental.chat.system.transform": async (_input, output) => {
+      if (!existsWolfDir(directory)) return;
+
       const instructions = safeRead(directory, FILES.openwolf);
       if (!instructions) return;
 
@@ -343,6 +384,8 @@ $ARGUMENTS
     },
 
     "tool.execute.before": async (input, output) => {
+      if (!existsWolfDir(directory)) return;
+
       const config = safeReadJSON(directory, FILES.config);
       if (config && config.enabled === false) return;
 
@@ -411,6 +454,8 @@ $ARGUMENTS
     },
 
     "tool.execute.after": async (input, output) => {
+      if (!existsWolfDir(directory)) return;
+
       const config = safeReadJSON(directory, FILES.config);
       if (config && config.enabled === false) return;
 
@@ -451,6 +496,7 @@ $ARGUMENTS
     },
 
     event: async ({ event }) => {
+      if (!existsWolfDir(directory)) return;
       if (event.type !== "session.idle") return;
 
       if (sessionState.totalTokens === 0 && sessionState.filesWritten.length === 0) return;
@@ -518,6 +564,7 @@ $ARGUMENTS
           tags: tool.schema.string().optional().describe("Comma-separated tags (for log)"),
         },
         async execute(args) {
+          if (!existsWolfDir(directory)) return "No .wolf/ directory. Run /wolf-init first.";
           const bugs = safeReadJSON(directory, FILES.buglog) || [];
 
           if (args.action === "search") {
