@@ -57,13 +57,23 @@ npm install -g litewolf
 npm install litewolf
 ```
 
-### 方式二：复制到全局插件目录
+### 方式二：从 GitHub Release 资产安装（无需 npm 登录）
+
+每次发布都会同时上传一个 tarball 到 [GitHub Releases](https://github.com/FountainChan/LiteWolf/releases)，可直接从 URL 安装，不依赖 npm 账号/token：
+
+```bash
+npm install https://github.com/FountainChan/LiteWolf/releases/download/v1.0.1/litewolf-1.0.1.tar.gz
+```
+
+将 URL 中的版本号 `v1.0.1` 替换为最新发布版本即可。
+
+### 方式三：复制到全局插件目录
 
 ```bash
 cp src/index.js ~/.config/opencode/plugins/openwolf.js
 ```
 
-### 方式三：复制到项目插件目录
+### 方式四：复制到项目插件目录
 
 ```bash
 cp src/index.js your-project/.opencode/plugins/openwolf.js

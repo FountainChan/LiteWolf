@@ -1,6 +1,6 @@
 {
   "name": "litewolf",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "🐺 A second brain for OpenCode — OpenWolf port with zero dependencies. File index, learning memory, token tracking, bug memory.",
   "main": "src/index.js",
   "exports": {

@@ -1,20 +1,46 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
 
 permissions:
-  contents: read
-  id-token: write
+  contents: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24.x
           registry-url: https://registry.npmjs.org
-      - run: npm publish --access public
+
+      - name: Publish to npm
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Build package tarball
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p /tmp/litewolf/src
+          cp src/index.js /tmp/litewolf/src/
+          cp package.json /tmp/litewolf/
+          cp README.md /tmp/litewolf/
+          cp LICENSE /tmp/litewolf/
+          tar czf "litewolf-${VERSION}.tar.gz" -C /tmp litewolf
+
+      - name: Create release and upload asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" \
+            "litewolf-${VERSION}.tar.gz" \
+            --repo "${{ github.repository }}" \
+            --title "v${VERSION}" \
+            --generate-notes

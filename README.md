@@ -57,14 +57,24 @@ Or install locally in your project:
 npm install litewolf
 ```
 
-### Option 2: Copy to global plugins
+### Option 2: From GitHub Release asset (no npm login)
+
+Each release also uploads a tarball to [GitHub Releases](https://github.com/FountainChan/LiteWolf/releases). Install it directly from the URL — no npm account/token needed:
+
+```bash
+npm install https://github.com/FountainChan/LiteWolf/releases/download/v1.0.1/litewolf-1.0.1.tar.gz
+```
+
+Replace `v1.0.1` in the URL with the latest release version.
+
+### Option 3: Copy to global plugins
 
 ```bash
 # Download and copy to global plugins directory
 cp src/index.js ~/.config/opencode/plugins/openwolf.js
 ```
 
-### Option 3: Copy to project plugins
+### Option 4: Copy to project plugins
 
 ```bash
 # Download and copy to project plugins directory
