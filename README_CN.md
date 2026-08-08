@@ -81,7 +81,7 @@ cp src/index.js your-project/.opencode/plugins/openwolf.js
 }
 ```
 
-安装完成后重启 OpenCode，LiteWolf 会自动在项目中初始化 `.wolf/` 目录。
+安装完成后重启 OpenCode，在项目中执行 `/wolf-init` 命令即可创建 `.wolf/` 目录。
 
 > 💡 **说明**：npm 包名是 `litewolf`，但插件文件名是 `openwolf.js`。这是有意为之——LiteWolf 这个名字用于与原版 Claude Code 的 OpenWolf 区分，而文件名保持兼容。
 
@@ -92,7 +92,7 @@ cp src/index.js your-project/.opencode/plugins/openwolf.js
 ```bash
 # 1. 安装插件（选择上面任一方式）
 
-# 2. 在项目中启动 OpenCode —— .wolf/ 目录自动创建
+# 2. 在项目中启动 OpenCode，执行 /wolf-init 创建 .wolf/ 目录
 
 # 3. 生成文件索引
 /wolf-scan
@@ -123,6 +123,8 @@ LiteWolf 在项目根目录创建 `.wolf/` 文件夹：
 
 | 命令 | 说明 |
 |------|------|
+| `/wolf-init` | 创建 `.wolf/` 目录及全部模板文件（anatomy、cerebrum、memory 等） |
+| `/wolf-destroy` | 删除 `.wolf/` 目录及所有内容（执行前会确认） |
 | `/wolf-scan` | 扫描项目并重建 `anatomy.md` 文件索引 |
 | `/wolf-learn <内容>` | 将学习或偏好添加到 `cerebrum.md` |
 
@@ -163,7 +165,7 @@ tags: "null-check, api, react"
 | 🎯 **系统提示词注入** | `experimental.chat.system.transform` | 将 OPENWOLF.md + anatomy 摘要 + cerebrum 规则 + buglog 注入每次对话 |
 | 🔍 **项目扫描** | `/wolf-scan` 命令 | 委托 AI 扫描文件，生成结构化的 anatomy.md |
 | 📚 **学习命令** | `/wolf-learn` 命令 | 通过 AI 向 cerebrum.md 添加条目 |
-| 🏗️ **自动初始化** | 插件加载时 | 如果 `.wolf/` 不存在则自动创建所有模板文件 |
+| 🏠 **显式初始化** | `/wolf-init` 命令 | 用户主动调用时创建 `.wolf/` 及全部模板文件（不再自动创建） |
 
 ### ❌ 未实现（高级功能）
 
@@ -225,6 +227,46 @@ LiteWolf (session.idle)：将会话摘要写入 token-ledger.json
   "enforce_cerebrum": true
 }
 ```
+
+---
+
+## 🛠️ 开发者指南
+
+### 把本地源码改动同步到 OpenCode
+
+OpenCode **不读取** `~/.config/opencode/package.json` 来解析插件名。`opencode.json` 里 `plugin` 数组中的每个名字都会被解析到独立的缓存目录 `~/.cache/opencode/packages/<name>@latest/`，默认从 npm registry 拉取。所以单纯改本地源码 checkout 不会生效，必须先把缓存重定向到本地。
+
+当你无法用 `npm publish`（例如 npm token 过期）时，按以下步骤让 OpenCode 加载本地源码：
+
+1. 把 OpenCode 的 litewolf 缓存指向本地源码。编辑 `~/.cache/opencode/packages/litewolf@latest/package.json`：
+
+```json
+{
+  "dependencies": {
+    "litewolf": "file:/绝对路径/到/你的/LiteWolf"
+  }
+}
+```
+
+2. 重装并验证：
+
+```bash
+cd ~/.cache/opencode/packages/litewolf@latest
+rm -rf node_modules/litewolf
+bun install
+```
+
+3. 重启 OpenCode，根据启动日志判断是否生效：
+   - 新版行为：`[openwolf] No .wolf/ directory. Run /wolf-init to activate.`
+   - 旧版行为（缓存未更新）：`[openwolf] Initialized .wolf/ directory`
+
+> ⚠️ **`bun install` 用 `file:` 协议会复制文件而不是软链接**。每次改完 `src/index.js` 后，必须重新执行 `bun install` 才能让改动生效。
+
+> 🧹 **首次切换前先清理旧缓存**：`rm -rf ~/.cache/opencode/packages/litewolf ~/.cache/opencode/packages/litewolf@latest/node_modules/litewolf ~/.bun/install/cache/litewolf@*`
+
+### 完全禁用插件
+
+从 `~/.config/opencode/opencode.json` 的 `plugin` 数组里删掉 `"litewolf"` 即可；或启动时加 `--pure` 跳过所有外部插件。
 
 ---
 

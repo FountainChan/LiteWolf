@@ -83,7 +83,7 @@ Requires `@opencode-ai/plugin` in your `.opencode/package.json`:
 }
 ```
 
-That's it. Restart OpenCode and LiteWolf auto-initializes `.wolf/` in your project.
+That's it. Restart OpenCode and run `/wolf-init` in your project to create `.wolf/`.
 
 ---
 
@@ -92,7 +92,7 @@ That's it. Restart OpenCode and LiteWolf auto-initializes `.wolf/` in your proje
 ```bash
 # 1. Install plugin (one of the options above)
 
-# 2. Start OpenCode in your project — .wolf/ is auto-created
+# 2. Start OpenCode in your project, then run /wolf-init to create .wolf/
 
 # 3. Generate the file index
 /wolf-scan
@@ -123,6 +123,8 @@ LiteWolf creates a `.wolf/` folder in your project root:
 
 | Command | Description |
 |---------|-------------|
+| `/wolf-init` | Create `.wolf/` with all template files (anatomy, cerebrum, memory, etc.) |
+| `/wolf-destroy` | Remove `.wolf/` directory and all its contents (with confirmation) |
 | `/wolf-scan` | Scan project and rebuild `anatomy.md` file index |
 | `/wolf-learn <text>` | Add a learning or preference to `cerebrum.md` |
 
@@ -163,7 +165,7 @@ tags: "null-check, api, react"
 | 🎯 **System Prompt Injection** | `experimental.chat.system.transform` | Injects OPENWOLF.md + anatomy summary + cerebrum rules + buglog into every conversation |
 | 🔍 **Project Scan** | `/wolf-scan` command | Delegates file scanning to AI, generates structured anatomy.md |
 | 📚 **Learning Commands** | `/wolf-learn` command | Adds entries to cerebrum.md via AI |
-| 🏗️ **Auto Initialization** | Plugin load | Creates `.wolf/` with all template files if not present |
+| 🏠 **Explicit Initialization** | `/wolf-init` command | Creates `.wolf/` with all template files on user demand (no auto-creation) |
 
 ### ❌ Not Implemented (Advanced Features)
 
@@ -225,6 +227,46 @@ Edit `.wolf/config.json` to customize:
   "enforce_cerebrum": true
 }
 ```
+
+---
+
+## 🛠️ Development
+
+### Syncing local source changes to OpenCode
+
+OpenCode does **not** read `~/.config/opencode/package.json` for plugin resolution. Each plugin name in `opencode.json` is resolved to its own cache at `~/.cache/opencode/packages/<name>@latest/`, which by default pulls from npm. So editing source in a local checkout has no effect until the cache is repointed.
+
+To make OpenCode load your local LiteWolf source (e.g. when `npm publish` is unavailable):
+
+1. Repoint OpenCode's litewolf cache to your local checkout. Edit `~/.cache/opencode/packages/litewolf@latest/package.json`:
+
+```json
+{
+  "dependencies": {
+    "litewolf": "file:/absolute/path/to/your/LiteWolf"
+  }
+}
+```
+
+2. Reinstall and verify:
+
+```bash
+cd ~/.cache/opencode/packages/litewolf@latest
+rm -rf node_modules/litewolf
+bun install
+```
+
+3. Restart OpenCode. Verify the new code is active by checking the startup log:
+   - New behavior: `[openwolf] No .wolf/ directory. Run /wolf-init to activate.`
+   - Old behavior (cache not updated): `[openwolf] Initialized .wolf/ directory`
+
+> ⚠️ **`bun install` with `file:` protocol copies files rather than symlinking.** After every edit to `src/index.js`, you must re-run `bun install` for changes to take effect.
+
+> 🧹 **Clean stale cache first** if you previously installed the npm version: `rm -rf ~/.cache/opencode/packages/litewolf ~/.cache/opencode/packages/litewolf@latest/node_modules/litewolf ~/.bun/install/cache/litewolf@*`
+
+### Disabling the plugin entirely
+
+Remove `"litewolf"` from the `plugin` array in `~/.config/opencode/opencode.json`, or start OpenCode with `--pure` to skip all external plugins.
 
 ---
 
